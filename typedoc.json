@@ -1,0 +1,13 @@
+{
+  "out": "./docs",
+  "excludeExternals": true,
+  "excludePrivate": true,
+  "entryPoints": [
+    "./src/index.ts",
+    "./src/memory.ts",
+    "./src/redis.ts"
+  ],
+  "disableSources": true,
+  "hideGenerator": true,
+  "githubPages": true
+}
