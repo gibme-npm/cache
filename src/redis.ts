@@ -47,7 +47,7 @@ export default class Redis extends Cache {
         super();
 
         options.host ??= process.env.REDIS_HOST ?? 'localhost';
-        options.port ??= parseInt(process.env.REDIS_PORT || '6379');
+        options.port ??= parseInt(process.env.REDIS_PORT || '6379') ?? 6379;
         options.username ??= process.env.REDIS_USERNAME;
         options.password ??= process.env.REDIS_PASSWORD;
         options.stdTTL ??= 300;
