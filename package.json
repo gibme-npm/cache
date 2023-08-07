@@ -1,6 +1,6 @@
 {
   "name": "@gibme/cache",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "A caching helper wrapped around various cache types",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
