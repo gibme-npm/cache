@@ -115,7 +115,7 @@ export default class Redis extends Cache {
      * Connects to the redis server
      */
     public async connect (): Promise<void> {
-        return this.client.connect();
+        await this.client.connect();
     }
 
     /**

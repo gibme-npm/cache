@@ -20,9 +20,9 @@
 
 import * as assert from 'assert';
 import { describe, it } from 'mocha';
-import { Redis, Memory } from '../src';
+import { Redis, Memory, Database } from '../src';
 
-const engines = [Memory, Redis];
+const engines = [Memory, Redis, Database];
 
 for (const Engine of engines) {
     describe(Engine.type, async function () {

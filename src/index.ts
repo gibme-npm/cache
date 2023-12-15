@@ -20,6 +20,11 @@
 
 import Memory, { MemoryOptions } from './memory';
 import Redis, { RedisClientOptions, AdditionalRedisClientOptions, OptionsType } from './redis';
+import Database, { DatabaseCacheOptions } from './database';
+export {
+    MySQL, MariaDB, Postgres, SQLite, LibSQL,
+    MySQLConfig, MySQLPoolConfig, PostgresPoolConfig, SQLiteConfig, LibSQLConfig
+} from './database';
 
 export {
     Memory,
@@ -27,10 +32,13 @@ export {
     Redis,
     RedisClientOptions,
     AdditionalRedisClientOptions,
-    OptionsType
+    OptionsType,
+    Database,
+    DatabaseCacheOptions
 };
 
 export default {
     Memory,
-    Redis
+    Redis,
+    Database
 };
