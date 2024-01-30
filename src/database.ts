@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2023, Brandon Lehmann <brandonlehmann@gmail.com>
+// Copyright (c) 2018-2024, Brandon Lehmann <brandonlehmann@gmail.com>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -128,6 +128,10 @@ export default class DB extends Cache {
 
         const _key = this.stringify(key);
 
+        if (_key.length > 255) {
+            throw new Error('key exceeds maximum allowable size');
+        }
+
         const expiration = this.now() + ttl;
 
         try {
@@ -157,6 +161,10 @@ export default class DB extends Cache {
         await this.checkReady();
 
         const _key = this.stringify(key);
+
+        if (_key.length > 255) {
+            throw new Error('key exceeds maximum allowable size');
+        }
 
         const [rows] = await this.client.query<{value: string}>(
             `SELECT value FROM ${this.client.escapeId(this.tableName)} WHERE key = ? AND expiration >= ?`,
@@ -194,6 +202,10 @@ export default class DB extends Cache {
         const value = await this.get(key);
 
         const _key = this.stringify(key);
+
+        if (_key.length > 255) {
+            throw new Error('key exceeds maximum allowable size');
+        }
 
         try {
             const [, meta] = await this.client.query(
@@ -252,6 +264,12 @@ export default class DB extends Cache {
 
         const fetch_keys = keys.map(key => this.stringify(key));
 
+        fetch_keys.forEach(key => {
+            if (key.length > 255) {
+                throw new Error('key exceeds maximum allowable size');
+            }
+        });
+
         const values = new Map<KeyType, ValueType>();
 
         const queries: string[] = [];
@@ -290,6 +308,12 @@ export default class DB extends Cache {
         await this.checkReady();
 
         const _keys = keys.map(key => this.stringify(key));
+
+        _keys.forEach(key => {
+            if (key.length > 255) {
+                throw new Error('key exceeds maximum allowable size');
+            }
+        });
 
         const queries: Query[] = [];
 
@@ -334,6 +358,12 @@ export default class DB extends Cache {
         }
 
         const _keys = keys.map(key => this.stringify(key));
+
+        _keys.forEach(key => {
+            if (key.length > 255) {
+                throw new Error('key exceeds maximum allowable size');
+            }
+        });
 
         const _values = values.map(value => this.stringify(value));
 
@@ -394,11 +424,17 @@ export default class DB extends Cache {
 
         const expiration = this.now() + ttl;
 
+        const _key = this.stringify(key);
+
+        if (_key.length > 255) {
+            throw new Error('key exceeds maximum allowable size');
+        }
+
         try {
             const [, meta] = await this.client.query(
                 `UPDATE ${this.client.escapeId(this.tableName)} SET expiration = ? WHERE key = ?`,
                 expiration,
-                this.stringify(key));
+                _key);
 
             return meta.affectedRows !== 0;
         } catch {
@@ -416,9 +452,15 @@ export default class DB extends Cache {
     ): Promise<number | undefined> {
         await this.checkReady();
 
+        const _key = this.stringify(key);
+
+        if (_key.length > 255) {
+            throw new Error('key exceeds maximum allowable size');
+        }
+
         const [rows] = await this.client.query<{expiration: number}>(
             `SELECT expiration FROM ${this.client.escapeId(this.tableName)} WHERE key = ?`,
-            this.stringify(key));
+            _key);
 
         const row = rows.shift();
 
@@ -465,7 +507,7 @@ export default class DB extends Cache {
                 this.tableName,
                 [{
                     name: 'key',
-                    type: 'text'
+                    type: 'varchar(255)'
                 },
                 {
                     name: 'value',
