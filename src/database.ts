@@ -40,6 +40,9 @@ export default class DB extends Cache {
     public readonly client: Database;
     private readonly defaultTableName = 'cache';
     private readonly checkTimer: Timer;
+    private readonly key_field: string;
+    private readonly value_field: string;
+    private readonly expiration_field: string;
 
     /**
      * Constructs a new instance of a database-based cache
@@ -59,11 +62,15 @@ export default class DB extends Cache {
 
         this.checkTimer = new Timer(this.options.checkperiod * 1_000, true);
 
+        this.key_field = this.client.escapeId('key');
+        this.value_field = this.client.escapeId('value');
+        this.expiration_field = this.client.escapeId('expiration');
+
         // check for expired entries and delete them
         this.checkTimer.on('tick', async () => {
             try {
                 await this.client.query(
-                    `DELETE FROM ${this.client.escapeId(this.tableName)} WHERE expiration < ?`,
+                    `DELETE FROM ${this.client.escapeId(this.tableName)} WHERE ${this.expiration_field} < ?`,
                     this.now());
             } catch {}
         });
@@ -167,7 +174,8 @@ export default class DB extends Cache {
         }
 
         const [rows] = await this.client.query<{value: string}>(
-            `SELECT value FROM ${this.client.escapeId(this.tableName)} WHERE key = ? AND expiration >= ?`,
+            `SELECT ${this.value_field} FROM ${this.client.escapeId(this.tableName)} ` +
+            `WHERE ${this.key_field} = ? AND ${this.expiration_field} >= ?`,
             _key,
             this.now());
 
@@ -209,7 +217,7 @@ export default class DB extends Cache {
 
         try {
             const [, meta] = await this.client.query(
-                `DELETE FROM ${this.client.escapeId(this.tableName)} WHERE key = ?`,
+                `DELETE FROM ${this.client.escapeId(this.tableName)} WHERE ${this.key_field} = ?`,
                 _key);
 
             this.emit('del', key, value);
@@ -243,7 +251,8 @@ export default class DB extends Cache {
 
         try {
             const [rows] = await this.client.query<{key: string}>(
-                `SELECT key FROM ${this.client.escapeId(this.tableName)} WHERE expiration >= ? ORDER BY key`,
+                `SELECT ${this.key_field} FROM ${this.client.escapeId(this.tableName)} ` +
+                `WHERE ${this.expiration_field} >= ? ORDER BY ${this.key_field}`,
                 this.now());
 
             return rows.map(elem => this.unstringify(elem.key));
@@ -279,8 +288,8 @@ export default class DB extends Cache {
 
         fetch_keys.forEach(key => {
             queries.push(
-                `SELECT key, value FROM ${this.client.escapeId(this.tableName)}` +
-            ' WHERE key = ? AND expiration >= ?');
+                `SELECT ${this.key_field}, ${this.value_field} FROM ${this.client.escapeId(this.tableName)} ` +
+            `WHERE ${this.key_field} = ? AND ${this.expiration_field} >= ?`);
             _values.push(key, now);
         });
 
@@ -319,7 +328,7 @@ export default class DB extends Cache {
 
         for (const key of _keys) {
             queries.push({
-                query: `DELETE FROM ${this.client.escapeId(this.tableName)} WHERE key = ?`,
+                query: `DELETE FROM ${this.client.escapeId(this.tableName)} WHERE ${this.key_field} = ?`,
                 values: [key]
             });
         }
@@ -401,8 +410,8 @@ export default class DB extends Cache {
         const result = new Map<KeyType, ValueType>();
 
         const [rows] = await this.client.query<{key: string, value: string}>(
-            `SELECT key, value FROM ${this.client.escapeId(this.tableName)}` +
-            ' WHERE expiration >= ?',
+            `SELECT ${this.key_field}, ${this.value_field} FROM ${this.client.escapeId(this.tableName)} ` +
+            `WHERE ${this.expiration_field} >= ?`,
             this.now());
 
         rows.forEach(row => result.set(this.unstringify(row.key), this.unstringify(row.value)));
@@ -432,7 +441,8 @@ export default class DB extends Cache {
 
         try {
             const [, meta] = await this.client.query(
-                `UPDATE ${this.client.escapeId(this.tableName)} SET expiration = ? WHERE key = ?`,
+                `UPDATE ${this.client.escapeId(this.tableName)} ` +
+                `SET ${this.expiration_field} = ? WHERE ${this.key_field} = ?`,
                 expiration,
                 _key);
 
@@ -459,7 +469,8 @@ export default class DB extends Cache {
         }
 
         const [rows] = await this.client.query<{expiration: number}>(
-            `SELECT expiration FROM ${this.client.escapeId(this.tableName)} WHERE key = ?`,
+            `SELECT ${this.expiration_field} FROM ${this.client.escapeId(this.tableName)} ` +
+            `WHERE ${this.key_field} = ?`,
             _key);
 
         const row = rows.shift();
