@@ -27,6 +27,8 @@ export {
     MySQLConfig, MySQLPoolConfig, PostgresPoolConfig, SQLiteConfig, LibSQLConfig
 } from '@gibme/sql';
 
+export { Cache };
+
 export interface DatabaseCacheOptions {
     database: Database;
     stdTTL: number;

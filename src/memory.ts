@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2023, Brandon Lehmann <brandonlehmann@gmail.com>
+// Copyright (c) 2018-2024, Brandon Lehmann <brandonlehmann@gmail.com>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -21,7 +21,7 @@
 import NodeCache, { Options as MemoryOptions } from 'node-cache';
 import Cache from './common';
 
-export { MemoryOptions };
+export { MemoryOptions, Cache };
 
 export default class Memory extends Cache {
     public readonly client: NodeCache;

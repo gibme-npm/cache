@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2023, Brandon Lehmann <brandonlehmann@gmail.com>
+// Copyright (c) 2018-2024, Brandon Lehmann <brandonlehmann@gmail.com>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -25,6 +25,7 @@ export {
     MySQL, MariaDB, Postgres, SQLite, LibSQL,
     MySQLConfig, MySQLPoolConfig, PostgresPoolConfig, SQLiteConfig, LibSQLConfig
 } from './database';
+export { Cache } from './common';
 
 export {
     Memory,
