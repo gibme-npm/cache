@@ -51,10 +51,10 @@
   resolved "https://registry.yarnpkg.com/@gar/promisify/-/promisify-1.1.3.tgz#555193ab2e3bb3b6adc3d551c9c030d9e860daf6"
   integrity sha512-k2Ty1JcVojjJFwrg/ThKi2ujJ7XNLYaFGNB/bWT9wGR+oSMJHMa5w+CUq6p/pVrKeNNgA7pCqEcjSnHVoqJQFw==
 
-"@gibme/sql@^3.1.3":
-  version "3.1.3"
-  resolved "https://registry.yarnpkg.com/@gibme/sql/-/sql-3.1.3.tgz#c73f22166442d913d60547a3be44d1cc403723d6"
-  integrity sha512-uo5TRSPe6WAnffnbHc4fe0VYayWU652MQiTtXgmv0ghutyO+zQldWXgXD8D9oI+L2Jk5UChqz3k8LByWxLBTuQ==
+"@gibme/sql@^3.1.4":
+  version "3.1.4"
+  resolved "https://registry.yarnpkg.com/@gibme/sql/-/sql-3.1.4.tgz#65da1ab1719d4f5778012d56fcbc6ca50a0e1700"
+  integrity sha512-gG48WznjXwrr5n4EMo+2XmJN4p+wgcevkIDTnvX2AFS1qWBYYCvsia3TR3tnTzfoORInkLhyafxfdUE3XiALrw==
   dependencies:
     "@libsql/client" "^0.4.0"
     "@types/mysql" "^2.15.25"
