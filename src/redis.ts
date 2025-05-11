@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2024, Brandon Lehmann <brandonlehmann@gmail.com>
+// Copyright (c) 2018-2025, Brandon Lehmann <brandonlehmann@gmail.com>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -18,66 +18,54 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import { createClient, RedisClientOptions, RedisFlushModes } from 'redis';
-import Cache from './common';
+import { createClient, RedisClientOptions, REDIS_FLUSH_MODES } from 'redis';
+import Cache from './cache';
 import { config } from 'dotenv';
+export { Cache };
 
 config();
 
-export { RedisClientOptions, Cache };
-
-export interface AdditionalRedisClientOptions {
-    host: string;
-    port: number;
-    stdTTL: number;
-}
-
-export type OptionsType = RedisClientOptions & AdditionalRedisClientOptions;
-
-export default class Redis extends Cache {
+export class Redis extends Cache {
     public readonly client = createClient();
-    private readonly options: Readonly<OptionsType>;
 
     /**
      * Constructs a new instance of a redis-based cache
      *
      * @param options
      */
-    constructor (options: Partial<OptionsType> = {}) {
+    constructor (private readonly options: Partial<Redis.Config> = {}) {
         super();
 
-        options.host ??= process.env.REDIS_HOST ?? 'localhost';
-        options.port ??= parseInt(process.env.REDIS_PORT || '6379') ?? 6379;
-        options.username ??= process.env.REDIS_USERNAME;
-        options.password ??= process.env.REDIS_PASSWORD;
-        options.stdTTL ??= 300;
+        this.options.host ??= process.env.REDIS_HOST ?? 'localhost';
+        this.options.port ??= parseInt(process.env.REDIS_PORT || '6379') ?? 6379;
+        this.options.username ??= process.env.REDIS_USERNAME;
+        this.options.password ??= process.env.REDIS_PASSWORD;
+        this.options.stdTTL ??= 300;
 
-        options.url = 'redis://';
+        this.options.url = 'redis://';
 
-        if (options.username) {
-            options.url += options.username;
+        if (this.options.username) {
+            this.options.url += this.options.username;
         }
 
-        if (options.password) {
-            if (options.username) {
-                options.url += ':';
+        if (this.options.password) {
+            if (this.options.username) {
+                this.options.url += ':';
             }
 
-            options.url += options.password;
+            this.options.url += this.options.password;
         }
 
-        if (options.username || options.password) {
-            options.url += '@';
+        if (this.options.username || this.options.password) {
+            this.options.url += '@';
         }
 
-        delete options.username;
-        delete options.password;
+        delete this.options.username;
+        delete this.options.password;
 
-        options.url += `${options.host}:${options.port}`;
+        this.options.url += `${this.options.host}:${this.options.port}`;
 
-        this.options = options as OptionsType;
-
-        this.client = createClient(options);
+        this.client = createClient(this.options);
 
         this.client.on('connect', () => this.emit('connect'));
         this.client.on('ready', () => this.emit('ready'));
@@ -213,7 +201,7 @@ export default class Redis extends Cache {
             await this.connect();
         }
 
-        return (await this.client.flushAll(RedisFlushModes.SYNC)).toLowerCase() === 'ok';
+        return (await this.client.flushAll(REDIS_FLUSH_MODES.SYNC)).toLowerCase() === 'ok';
     }
 
     /**
@@ -346,7 +334,13 @@ export default class Redis extends Cache {
 
         const _key = this.stringify(key);
 
-        return this.client.expire(_key, ttl);
+        try {
+            await this.client.expire(_key, ttl);
+
+            return true;
+        } catch {
+            return false;
+        }
     }
 
     /**
@@ -390,4 +384,12 @@ export default class Redis extends Cache {
     }
 }
 
-export { Redis };
+export namespace Redis {
+    export type Config = RedisClientOptions & {
+        host: string;
+        port: number;
+        stdTTL: number;
+    }
+}
+
+export default Redis;

@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2024, Brandon Lehmann <brandonlehmann@gmail.com>
+// Copyright (c) 2018-2025, Brandon Lehmann <brandonlehmann@gmail.com>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -18,25 +18,16 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import { createConnection, Database, Query } from '@gibme/sql';
+import { createConnection, Database } from '@gibme/sql';
 import Timer from '@gibme/timer';
-import Cache from './common';
-
-export {
-    MySQL, MariaDB, Postgres, SQLite, LibSQL,
-    MySQLConfig, MySQLPoolConfig, PostgresPoolConfig, SQLiteConfig, LibSQLConfig
-} from '@gibme/sql';
-
+import Cache from './cache';
 export { Cache };
 
-export interface DatabaseCacheOptions {
-    database: Database;
-    stdTTL: number;
-    checkperiod: number;
-    tableName: string;
-}
+export {
+    MySQL, MariaDB, Postgres, SQLite, LibSQL
+} from '@gibme/sql';
 
-export default class DB extends Cache {
+export class DatabaseCache extends Cache {
     private readonly tableName;
     private ready = false;
     public readonly client: Database;
@@ -51,7 +42,7 @@ export default class DB extends Cache {
      *
      * @param options
      */
-    constructor (private readonly options: Partial<DatabaseCacheOptions> = {}) {
+    constructor (private readonly options: Partial<DatabaseCache.Config> = {}) {
         super();
 
         this.options.database ??= createConnection();
@@ -326,7 +317,7 @@ export default class DB extends Cache {
             }
         });
 
-        const queries: Query[] = [];
+        const queries: Database.Query[] = [];
 
         for (const key of _keys) {
             queries.push({
@@ -538,4 +529,13 @@ export default class DB extends Cache {
     }
 }
 
-export { DB as Database };
+export namespace DatabaseCache {
+    export type Config = {
+        database: Database;
+        stdTTL: number;
+        checkperiod: number;
+        tableName: string;
+    }
+}
+
+export default DatabaseCache;

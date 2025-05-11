@@ -18,13 +18,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import { ICache } from './types';
 import { EventEmitter } from 'events';
 
 /**
  * Base cache interface
  */
-export default abstract class Cache extends EventEmitter implements ICache {
+export default abstract class Cache extends EventEmitter {
     protected readonly defaultTTL = 300;
 
     abstract get isReady(): Readonly<boolean>;

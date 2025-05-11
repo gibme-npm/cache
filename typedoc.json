@@ -5,7 +5,8 @@
   "entryPoints": [
     "./src/index.ts",
     "./src/memory.ts",
-    "./src/redis.ts"
+    "./src/redis.ts",
+    "./src/database.ts"
   ],
   "disableSources": true,
   "hideGenerator": true,

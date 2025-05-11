@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2024, Brandon Lehmann <brandonlehmann@gmail.com>
+// Copyright (c) 2018-2025, Brandon Lehmann <brandonlehmann@gmail.com>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -18,14 +18,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import NodeCache, { Options as MemoryOptions } from 'node-cache';
-import Cache from './common';
+import NodeCache, { Options } from 'node-cache';
+import Cache from './cache';
 
-export { MemoryOptions, Cache };
+export { Cache };
 
-export default class Memory extends Cache {
+export class Memory extends Cache {
     public readonly client: NodeCache;
-    private readonly options: Readonly<MemoryOptions>;
     private ready = false;
 
     /**
@@ -33,15 +32,13 @@ export default class Memory extends Cache {
      *
      * @param options
      */
-    constructor (options: Partial<MemoryOptions> = {}) {
+    constructor (private readonly options: Partial<Memory.Config> = {}) {
         super();
 
-        options.stdTTL ??= 300;
-        options.checkperiod ??= 30;
+        this.options.stdTTL ??= 300;
+        this.options.checkperiod ??= 30;
 
-        this.options = options;
-
-        this.client = new NodeCache(options);
+        this.client = new NodeCache(this.options);
 
         this.client.on('set', (key, value) =>
             this.emit('set', this.unstringify(key), this.unstringify(value)));
@@ -294,4 +291,8 @@ export default class Memory extends Cache {
     }
 }
 
-export { Memory };
+export namespace Memory {
+    export type Config = Options;
+}
+
+export default Memory;
