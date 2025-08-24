@@ -22,7 +22,7 @@ import Memory from './memory';
 import Redis from './redis';
 import Database from './database';
 export {
-    MySQL, MariaDB, Postgres, SQLite, LibSQL
+    MySQL, MariaDB, Postgres, SQLite
 } from './database';
 export { Cache } from './cache';
 

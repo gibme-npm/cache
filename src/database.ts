@@ -24,7 +24,7 @@ import Cache from './cache';
 export { Cache };
 
 export {
-    MySQL, MariaDB, Postgres, SQLite, LibSQL
+    MySQL, MariaDB, Postgres, SQLite
 } from '@gibme/sql';
 
 export class DatabaseCache extends Cache {
