@@ -1,6 +1,6 @@
 {
   "name": "@gibme/cache",
-  "version": "20.0.0",
+  "version": "20.0.1",
   "description": "A caching helper wrapped around various cache types",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -57,7 +57,7 @@
     "email": "brandonlehmann@gmail.com"
   },
   "dependencies": {
-    "@gibme/sql": "^20.0.0",
+    "@gibme/sql": "^20.1.0",
     "@gibme/timer": "^20.0.0",
     "dotenv": "^17.2.1",
     "node-cache": "^5.1.2",
